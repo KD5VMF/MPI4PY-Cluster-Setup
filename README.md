@@ -7,9 +7,9 @@ This project showcases two distributed computing programs leveraging **MPI (Mess
 
 ---
 
-## 📋 Cluster and Master Node Setup
+## 📋 Cluster and Coordinator Node Setup
 
-### **Master Node**
+### **Coordinator Node**
 - **Device**: Raspberry Pi 5
 - **Case**: Argon ONE V3 M.2 NVME PCIE Case
 - **Specifications**:
@@ -88,7 +88,7 @@ The Raspberry Pi 5 is accessed via **Windows 11 CMD SSH** from the user's PC, wh
    done
    ```
 
-2. Verify the files exist on each node:
+2. Verify the files exist on each worker node:
    ```bash
    ssh sysop@192.168.0.191 ls ~/password_cracker.py ~/matrix_multiplication.py
    ```
