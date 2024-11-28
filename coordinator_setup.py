@@ -14,7 +14,13 @@ commands = [
     f"~/{env_name}/bin/pip install mpi4py numpy scipy pandas matplotlib seaborn scikit-learn tensorflow tqdm",
     f"~/{env_name}/bin/pip install pillow requests flask fastapi sqlalchemy psycopg2-binary opencv-python-headless sympy h5py boto3",
     # Install PyTorch with specific command for CUDA support
-    f"~/{env_name}/bin/pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121"
+    f"~/{env_name}/bin/pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121",
+    # Ensure proper PATH and LD_LIBRARY_PATH are set
+    "echo 'export PATH=$PATH:/usr/local/bin:/usr/bin' >> ~/.bashrc",
+    "echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib/x86_64-linux-gnu' >> ~/.bashrc",
+    "source ~/.bashrc",  # Reload bashrc
+    # Ensure /tmp permissions are correct
+    "sudo chmod 1777 /tmp",
 ]
 
 # Function to execute a command locally
