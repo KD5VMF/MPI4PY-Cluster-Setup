@@ -1,9 +1,8 @@
-
 import os
 import subprocess
 
 # Ask the user for the virtual environment name
-env_name = input("Enter the virtual environment name to use (default: envName): ").strip() or "envName"
+env_name = input("Enter the virtual environment name to use (default: envMPI): ").strip() or "envMPI"
 
 # Define your nodes
 nodes = [
@@ -46,8 +45,7 @@ def run_command_on_node(node, command):
     if result.returncode == 0:
         print(f"[SUCCESS] {node}: {command}")
     else:
-        print(f"[ERROR] {node}: {command}
-{result.stderr}")
+        print(f"[ERROR] {node}: {command}\n{result.stderr}")
 
 # Function to verify the installation
 def verify_installation(node):
@@ -62,15 +60,13 @@ def verify_installation(node):
     if result.returncode == 0:
         print(f"[VERIFIED] {node}: mpi4py, numpy, scipy, pandas, matplotlib, tensorflow, torch versions: {result.stdout.strip()}")
     else:
-        print(f"[ERROR] {node}: Unable to verify installation
-{result.stderr}")
+        print(f"[ERROR] {node}: Unable to verify installation\n{result.stderr}")
 
 # Main program
 def main():
     print(f"Setting up nodes with virtual environment: {env_name}")
     for node in nodes:
-        print(f"
---- Setting up {node} ---")
+        print(f"\n--- Setting up {node} ---")
         for command in commands:
             run_command_on_node(node, command)
         verify_installation(node)
