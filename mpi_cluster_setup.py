@@ -1,9 +1,8 @@
-
 import os
 import subprocess
 
 # Ask the user for the virtual environment name
-env_name = input("Enter the virtual environment name to use (default: envName): ").strip() or "envName"
+env_name = input("Enter the virtual environment name to use (default: envMPI): ").strip() or "envMPI"
 
 # Define your nodes
 nodes = [
@@ -25,8 +24,7 @@ commands = [
     f"~/{env_name}/bin/pip install pillow requests flask fastapi sqlalchemy psycopg2-binary opencv-python-headless sympy h5py boto3",
     f"~/{env_name}/bin/pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu",
     "echo 'export PATH=$PATH:/usr/local/bin:/usr/bin' >> ~/.bashrc",
-    "echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib/x86_64-linux-gnu' >> ~/.bashrc",
-    "source ~/.bashrc"
+    "echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib/x86_64-linux-gnu' >> ~/.bashrc"
 ]
 
 # Function to execute commands on a node via SSH
@@ -44,9 +42,9 @@ def run_commands_on_node(node):
         else:
             print(f"[ERROR] {node}: {command}\n{result.stderr}")
 
-# Function to verify the installation of mpi4py and environment
+# Function to verify the installation of mpi4py and the environment
 def verify_installation_on_node(node):
-    command = f"ssh sysop@{node} '~/{env_name}/bin/python3 -c \'import mpi4py; print(mpi4py.__version__)\''"
+    command = f"ssh sysop@{node} '~/envMPI/bin/python3 -c \\\"import mpi4py; print(mpi4py.__version__)\\\"'"
     print(f"Verifying mpi4py installation on {node}")
     result = subprocess.run(
         command,
