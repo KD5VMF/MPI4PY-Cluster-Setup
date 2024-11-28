@@ -170,7 +170,7 @@ Encryption Time: 0.001234 seconds
 ### Matrix Multiplication
 ```plaintext
 +----------------------------------------------------------------------+
-|                      MATRIX MULTIPLICATION COMPLETED                |
+|                      MATRIX MULTIPLICATION COMPLETED                 |
 +----------------------------------------------------------------------+
 | Matrix size: 1024 x 1024                                             |
 | Total computation time: 2.3456 seconds                               |
@@ -192,4 +192,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ---
 
 ## ✒️ Attribution
-This setup, programs, and documentation were created by ChatGPT 4.0 in collaboration with the user, based on their current DeskPi Super6C and Raspberry Pi 5 cluster configuration.
+This setup, programs, and documentation were created by ChatGPT 4.0 in collaboration with Adam Figueroa, based on the current DeskPi Super6C and Raspberry Pi 5 cluster configuration.
