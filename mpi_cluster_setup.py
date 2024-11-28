@@ -41,9 +41,12 @@ def run_command_on_node(node, command):
     else:
         print(f"[ERROR] {node}: {command}\n{result.stderr}")
 
-# Function to verify mpi4py installation
+# Function to verify mpi4py and pycryptodome installation
 def verify_installation(node):
-    command = f"ssh sysop@{node} '~/envMPI/bin/python3 -c \"import mpi4py, Crypto.Cipher; print('mpi4py:', mpi4py.__version__, '| pycryptodome AES loaded')\"'"
+    command = (
+        f"ssh sysop@{node} '~/envMPI/bin/python3 -c "
+        f"\"import mpi4py; from Crypto.Cipher import AES; print('mpi4py and pycryptodome verified!')\"'"
+    )
     print(f"Verifying installation on {node}")
     result = subprocess.run(
         command,
