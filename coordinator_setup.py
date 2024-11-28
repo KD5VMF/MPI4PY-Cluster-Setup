@@ -3,7 +3,7 @@ import os
 import subprocess
 
 # Ask the user for the virtual environment name
-env_name = input("Enter the virtual environment name to use (default: envMPI): ").strip() or "envMPI"
+env_name = input("Enter the virtual environment name to use (default: envName): ").strip() or "envName"
 
 # Commands to set up the Coordinator Node
 commands = [
@@ -34,11 +34,28 @@ def run_command(command):
     else:
         print(f"[ERROR] {command}\n{result.stderr}")
 
+# Function to verify mpi4py installation and environment
+def verify_installation():
+    command = f"~/{env_name}/bin/python3 -c 'import mpi4py; print(mpi4py.__version__)'"
+    print("Verifying mpi4py installation...")
+    result = subprocess.run(
+        command,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
+    if result.returncode == 0:
+        print(f"[VERIFIED] mpi4py version: {result.stdout.strip()}")
+    else:
+        print(f"[ERROR] Unable to verify mpi4py\n{result.stderr}")
+
 # Main program
 def main():
     print(f"Setting up Coordinator Node with virtual environment: {env_name}")
     for command in commands:
         run_command(command)
+    verify_installation()
 
 if __name__ == "__main__":
     main()
