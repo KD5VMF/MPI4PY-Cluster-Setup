@@ -1,5 +1,5 @@
 
-# 🖥️ MPI Distributed Computing Programs and Cluster Setup
+# 🖥️ MPI Distributed Computing Programs and Cluster Setup   - NOT READY YET / 11/28/2024
 
 This repository includes tools, programs, and documentation to set up and utilize a Raspberry Pi-based MPI cluster for distributed computing. The repository demonstrates the following:
 
