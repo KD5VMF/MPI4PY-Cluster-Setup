@@ -14,8 +14,7 @@ commands = [
     f"~/{env_name}/bin/pip install pillow requests flask fastapi sqlalchemy psycopg2-binary opencv-python-headless sympy h5py boto3",
     f"~/{env_name}/bin/pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu",
     "echo 'export PATH=$PATH:/usr/local/bin:/usr/bin' >> ~/.bashrc",
-    "echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib/x86_64-linux-gnu' >> ~/.bashrc",
-    "source ~/.bashrc"
+    "echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib/x86_64-linux-gnu' >> ~/.bashrc"
 ]
 
 # Function to run commands locally
@@ -35,7 +34,7 @@ def run_command(command):
 
 # Function to verify mpi4py installation and environment
 def verify_installation():
-    command = f"~/{env_name}/bin/python3 -c 'import mpi4py; print(mpi4py.__version__)'"
+    command = f"~/envMPI/bin/python3 -c 'import mpi4py; print(mpi4py.__version__)'"
     print("Verifying mpi4py installation...")
     result = subprocess.run(
         command,
