@@ -1,9 +1,8 @@
-
 import os
 import subprocess
 
 # Ask the user for the virtual environment name
-env_name = input("Enter the virtual environment name to use (default: envMPI: ").strip() or "envMPI"
+env_name = input("Enter the virtual environment name to use (default: envName): ").strip() or "envName"
 
 # Define the commands to run on the Coordinator Node
 commands = [
@@ -37,8 +36,7 @@ def run_command(command):
     if result.returncode == 0:
         print(f"[SUCCESS] {command}")
     else:
-        print(f"[ERROR] {command}
-{result.stderr}")
+        print(f"[ERROR] {command}\n{result.stderr}")
 
 # Function to verify the installation
 def verify_installation():
@@ -54,8 +52,7 @@ def verify_installation():
     if result.returncode == 0:
         print(f"[VERIFIED]: mpi4py, numpy, scipy, pandas, matplotlib, tensorflow, torch versions: {result.stdout.strip()}")
     else:
-        print(f"[ERROR]: Unable to verify installation
-{result.stderr}")
+        print(f"[ERROR]: Unable to verify installation\n{result.stderr}")
 
 # Main program
 def main():
