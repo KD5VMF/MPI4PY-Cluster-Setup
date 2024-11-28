@@ -1,0 +1,6 @@
+192.168.0.191 slots=4  # Worker node 1
+192.168.0.192 slots=4  # Worker node 2
+192.168.0.193 slots=4  # Worker node 3
+192.168.0.194 slots=4  # Worker node 4
+192.168.0.195 slots=4  # Worker node 5
+192.168.0.196 slots=4  # Worker node 6
