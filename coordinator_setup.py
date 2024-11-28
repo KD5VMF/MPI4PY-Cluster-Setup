@@ -1,8 +1,9 @@
+
 import os
 import subprocess
 
 # Ask the user for the virtual environment name
-env_name = input("Enter the virtual environment name to use (default: envMPI): ").strip() or "envMPI"
+env_name = input("Enter the virtual environment name to use (default: envName): ").strip() or "envName"
 
 # Define the commands to run on the Coordinator Node
 commands = [
@@ -13,8 +14,8 @@ commands = [
     # Install additional Python libraries
     f"~/{env_name}/bin/pip install mpi4py numpy scipy pandas matplotlib seaborn scikit-learn tensorflow tqdm",
     f"~/{env_name}/bin/pip install pillow requests flask fastapi sqlalchemy psycopg2-binary opencv-python-headless sympy h5py boto3",
-    # Install PyTorch with specific command for CUDA support
-    f"~/{env_name}/bin/pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121",
+    # Install PyTorch CPU-only
+    f"~/{env_name}/bin/pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu",
     # Ensure proper PATH and LD_LIBRARY_PATH are set
     "echo 'export PATH=$PATH:/usr/local/bin:/usr/bin' >> ~/.bashrc",
     "echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib/x86_64-linux-gnu' >> ~/.bashrc",
@@ -36,7 +37,8 @@ def run_command(command):
     if result.returncode == 0:
         print(f"[SUCCESS] {command}")
     else:
-        print(f"[ERROR] {command}\n{result.stderr}")
+        print(f"[ERROR] {command}
+{result.stderr}")
 
 # Function to verify the installation
 def verify_installation():
@@ -52,7 +54,8 @@ def verify_installation():
     if result.returncode == 0:
         print(f"[VERIFIED]: mpi4py, numpy, scipy, pandas, matplotlib, tensorflow, torch versions: {result.stdout.strip()}")
     else:
-        print(f"[ERROR]: Unable to verify installation\n{result.stderr}")
+        print(f"[ERROR]: Unable to verify installation
+{result.stderr}")
 
 # Main program
 def main():
