@@ -2,7 +2,7 @@ import os
 import subprocess
 
 # Ask the user for the virtual environment name
-env_name = input("Enter the virtual environment name to use (default: envMPI): ").strip() or "envName"
+env_name = input("Enter the virtual environment name to use (default: envMPI): ").strip() or "envMPI"
 
 # Define your nodes
 nodes = [
