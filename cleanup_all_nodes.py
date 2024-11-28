@@ -15,10 +15,13 @@ nodes = [
 cleanup_commands = [
     "rm -rf ~/envMPI",  # Remove the virtual environment
     "sudo apt purge -y python3-venv python3-pip mpich libmpich-dev openmpi-bin openmpi-common libopenmpi-dev",
+    "sudo apt purge -y mpi4py",  # Explicitly remove mpi4py
     "sudo apt autoremove -y",
     "sudo apt clean",
     "find ~ -name '*.pyc' -delete",  # Remove compiled Python files
-    "find ~ -name '__pycache__' -delete"  # Remove Python cache directories
+    "find ~ -name '__pycache__' -delete",  # Remove Python cache directories
+    "sudo rm -rf /usr/lib/x86_64-linux-gnu/libmpi*",  # Clean up residual MPI libraries
+    "sudo rm -rf /usr/lib/aarch64-linux-gnu/libmpi*"  # For ARM-based systems like Raspberry Pi
 ]
 
 # Function to execute cleanup commands on a remote node
