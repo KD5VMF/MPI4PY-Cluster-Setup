@@ -29,40 +29,60 @@ This project demonstrates a distributed password cracking program using hashing 
 
 ## 📋 Requirements
 
-- **Python 3.6+**
-- Required Python libraries:
-  - `mpi4py`
-  - `pycryptodome`
+### **Cluster Setup**
+1. Ensure all nodes are accessible via SSH without a password.
+   - Generate an SSH key (if not already created) on your control node:
+     ```bash
+     ssh-keygen -t rsa
+     ```
+   - Copy the key to each worker node (replace `NODE_IP` with your worker's IP):
+     ```bash
+     ssh-copy-id sysop@NODE_IP
+     ```
 
-Install dependencies with:
-```bash
-pip install mpi4py pycryptodome
-```
+2. Install the following dependencies on all nodes:
+   - **MPI**: Install MPICH or OpenMPI on all nodes:
+     ```bash
+     sudo apt update && sudo apt install -y mpich
+     ```
+   - **Python**: Ensure Python 3.6+ is installed on all nodes.
 
-- **MPI Environment**:
-  - Install MPI (e.g., MPICH or OpenMPI):
-    ```bash
-    sudo apt install mpich
-    ```
+3. Ensure your worker nodes are listed in an MPI hostfile, e.g., `~/mpi_hosts`:
+   ```plaintext
+   192.168.0.191 slots=4  # Worker node 1
+   192.168.0.192 slots=4  # Worker node 2
+   192.168.0.193 slots=4  # Worker node 3
+   ...
+   ```
 
 ---
 
 ## 🖥️ Usage
 
-### Run the Program Locally
-1. Ensure the program is located in the same directory as your working terminal.
-2. Execute with MPI:
+### 1. Push the Program to All Worker Nodes
+1. Copy the `password_cracker.py` program to all worker nodes:
    ```bash
-   mpirun -np 4 python3 password_cracker.py
+   for NODE in 192.168.0.191 192.168.0.192 192.168.0.193; do
+       scp password_cracker.py sysop@$NODE:~/
+   done
    ```
-   Replace `4` with the number of processes you want to run.
 
-### Distributed Cluster Execution
-1. Prepare a hostfile (e.g., `~/mpi_hosts`) with the IP addresses of all nodes.
-2. Execute on a cluster:
+2. Verify the program exists on each node:
    ```bash
-   mpirun --hostfile ~/mpi_hosts -np 16 python3 password_cracker.py
+   ssh sysop@192.168.0.191 ls ~/password_cracker.py
    ```
+
+### 2. Run the Program
+- **On a Single Machine**:
+  ```bash
+  mpirun -np 4 python3 password_cracker.py
+  ```
+
+- **On a Cluster**:
+  ```bash
+  mpirun --hostfile ~/mpi_hosts -np 16 python3 password_cracker.py
+  ```
+  Replace `16` with the total number of processes across all nodes.
 
 ---
 
