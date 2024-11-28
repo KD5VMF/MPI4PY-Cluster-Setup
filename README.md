@@ -173,4 +173,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ---
 
 ## ✒️ Attribution
-This setup, programs, and documentation were created by ChatGPT 4.0 in collaboration with Adam Figueroa, based on the above DeskPi Super6C and Raspberry Pi 5 cluster configuration.
+This setup, programs, and documentation was created by ChatGPT 4o in collaboration with Adam Figueroa, based on the above DeskPi Super6C and Raspberry Pi 5 cluster configuration.
