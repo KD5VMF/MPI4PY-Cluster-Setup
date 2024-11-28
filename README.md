@@ -7,14 +7,24 @@ This project showcases two distributed computing programs leveraging **MPI (Mess
 
 ---
 
-## 📋 DeskPi Super6C Cluster Configuration
+## 📋 Cluster and Master Node Setup
 
-The current configuration used for testing includes:
+### **Master Node**
+- **Device**: Raspberry Pi 5
+- **Case**: Argon ONE V3 M.2 NVME PCIE Case
+- **Specifications**:
+  - 8GB RAM
+  - 512GB NVMe storage
+
+### **Cluster (Worker Nodes)**
 - **6 Raspberry Pi Compute Modules 4 (CM4)**:
   - 4GB RAM each.
   - **Node1**: 32GB eMMC storage.
   - **Nodes 2-6**: 256GB NVMe storage.
 - Connected via DeskPi Super6C carrier board.
+
+### Access
+The Raspberry Pi 5 is accessed via **Windows 11 CMD SSH** from the user's PC, which acts as the interface to run programs on the cluster.
 
 ---
 
