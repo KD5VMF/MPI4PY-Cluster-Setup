@@ -1,9 +1,14 @@
 
-# 🖥️ MPI Distributed Computing Programs
+# 🖥️ MPI Distributed Computing Programs and Setup
 
-This project showcases two distributed computing programs leveraging **MPI (Message Passing Interface)**. Designed for parallel execution across a multi-node cluster, these programs demonstrate:
-1. **Password Cracking with Hashing and AES Encryption**
-2. **Matrix Multiplication for Performance Benchmarking**
+This project includes tools and programs to set up and utilize a Raspberry Pi-based MPI cluster for distributed computing. The repository demonstrates the following:
+
+1. **Cluster Setup with `mpi_cluster_setup.py`**
+   - Automates the setup of Python environments and dependencies across cluster nodes.
+
+2. **Distributed Computing Programs**
+   - 🔒 **Password Cracker**: Hash cracking with MD5, SHA-256, and AES encryption.
+   - 📊 **Matrix Multiplication**: Performance benchmarking using large matrix operations.
 
 ---
 
@@ -24,50 +29,20 @@ This project showcases two distributed computing programs leveraging **MPI (Mess
 - Connected via DeskPi Super6C carrier board.
 
 ### Access
-The Raspberry Pi 5 is accessed via **Windows 11 CMD SSH** from the user's PC, which acts as the interface to run programs on the cluster.
+The Raspberry Pi 5 (Coordinator Node) is accessed via **Windows 11 CMD SSH** from the user's PC, which acts as the interface to set up and run programs on the cluster.
 
 ---
 
-## 🚀 Programs Overview
+## 🚀 Cluster Setup with `mpi_cluster_setup.py`
 
-### 1. 🔒 **Password Cracker**
-- **Features**:
-  - Hash cracking using MD5 and SHA-256.
-  - AES-128 and AES-256 encryption and decryption with timing metrics.
-  - Interactive user interface for operation selection.
-- **Purpose**:
-  - Demonstrates MPI workload distribution for password cracking or encryption tasks.
+### Purpose
+The `mpi_cluster_setup.py` script simplifies the setup of a Raspberry Pi cluster by:
+- Installing Python 3 and MPI dependencies on all nodes.
+- Creating Python virtual environments for consistent library management.
+- Installing required Python libraries (e.g., `mpi4py`, `numpy`, `scipy`, etc.).
 
-### 2. 📊 **Matrix Multiplication**
-- **Features**:
-  - Distributed dense matrix multiplication.
-  - Supports matrix sizes from 256x256 to 22,528x22,528.
-  - Calculates GFLOPS and TOPS for performance benchmarking.
-- **Purpose**:
-  - Benchmarks computational performance across a distributed cluster.
-
----
-
-## 🖥️ Requirements
-
-### Cluster Setup
-1. Ensure all nodes are accessible via SSH without a password:
-   ```bash
-   ssh-keygen -t rsa
-   ssh-copy-id sysop@NODE_IP
-   ```
-
-2. Install necessary dependencies on all nodes:
-   - MPI Environment:
-     ```bash
-     sudo apt update && sudo apt install -y mpich
-     ```
-   - Python Libraries:
-     ```bash
-     pip install mpi4py numpy
-     ```
-
-3. Prepare a hostfile for MPI execution (e.g., `~/mpi_hosts`):
+### How to Use
+1. **Prepare the Host File**: Ensure you have a list of all node IPs in a text file (e.g., `~/mpi_hosts`):
    ```plaintext
    192.168.0.191 slots=4  # Node 1
    192.168.0.192 slots=4  # Node 2
@@ -77,11 +52,29 @@ The Raspberry Pi 5 is accessed via **Windows 11 CMD SSH** from the user's PC, wh
    192.168.0.196 slots=4  # Node 6
    ```
 
+2. **Run the Script**:
+   - On the Coordinator Node (Raspberry Pi 5), execute:
+     ```bash
+     python3 mpi_cluster_setup.py
+     ```
+   - The script will prompt you for a virtual environment name (default: `envName`). It will then:
+     - Update and upgrade all worker nodes.
+     - Install MPI dependencies (`mpich`) and Python libraries.
+     - Verify the installation.
+
+3. **Verify Setup**:
+   - After the script completes, check the virtual environment and libraries on any node:
+     ```bash
+     ssh sysop@192.168.0.191
+     source ~/envName/bin/activate
+     python3 -m pip list
+     ```
+
 ---
 
 ## 📂 Deploying Programs to Worker Nodes
 
-1. Copy both programs to all worker nodes:
+1. Copy the programs (`password_cracker.py`, `matrix_multiplication.py`) to all worker nodes:
    ```bash
    for NODE in 192.168.0.191 192.168.0.192 192.168.0.193 192.168.0.194 192.168.0.195 192.168.0.196; do
        scp password_cracker.py matrix_multiplication.py sysop@$NODE:~/
