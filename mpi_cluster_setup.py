@@ -1,11 +1,22 @@
+
 import os
 import subprocess
 
 # Ask the user for the virtual environment name
 env_name = input("Enter the virtual environment name to use (default: envMPI): ").strip() or "envMPI"
 
-# Commands to set up the coordinator node
-setup_commands = [
+# Define your nodes
+nodes = [
+    "192.168.0.191",  # Worker node 1
+    "192.168.0.192",  # Worker node 2
+    "192.168.0.193",  # Worker node 3
+    "192.168.0.194",  # Worker node 4
+    "192.168.0.195",  # Worker node 5
+    "192.168.0.196"   # Worker node 6
+]
+
+# Commands to run on each node
+commands = [
     "sudo apt update && sudo apt upgrade -y",
     "sudo apt install -y python3 python3-venv python3-pip mpich libmpich-dev",
     f"python3 -m venv ~/{env_name}",
@@ -16,31 +27,35 @@ setup_commands = [
     f"~/{env_name}/bin/pip install pycryptodome"
 ]
 
-# Function to execute commands on the coordinator node
-def setup_coordinator():
-    for command in setup_commands:
-        print(f"Running: {command}")
-        result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        if result.returncode == 0:
-            print(f"[SUCCESS] {command}")
-        else:
-            print(f"[ERROR] {command}\n{result.stderr}")
+# Function to execute a command on a node via SSH
+def run_command_on_node(node, command):
+    print(f"Running on {node}: {command}")
+    ssh_command = f"ssh sysop@{node} \"{command}\""
+    result = subprocess.run(ssh_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if result.returncode == 0:
+        print(f"[SUCCESS] {node}: {command}")
+    else:
+        print(f"[ERROR] {node}: {command}\n{result.stderr}")
 
-# Verify mpi4py installation
-def verify_mpi4py():
-    command = f"~/{env_name}/bin/python3 -c 'import mpi4py; print(mpi4py.__version__)'"
-    print("Verifying mpi4py installation...")
+# Verify mpi4py installation on nodes
+def verify_mpi4py(node):
+    command = f"ssh sysop@{node} 'source ~/{env_name}/bin/activate && python3 -c \"import mpi4py; print(mpi4py.__version__)\"'"
+    print(f"Verifying mpi4py on {node}...")
     result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if result.returncode == 0:
-        print(f"[VERIFIED] mpi4py version: {result.stdout.strip()}")
+        print(f"[VERIFIED] {node}: mpi4py version: {result.stdout.strip()}")
     else:
-        print(f"[ERROR] Unable to verify mpi4py\n{result.stderr}")
+        print(f"[ERROR] {node}: Unable to verify mpi4py\n{result.stderr}")
 
+# Main program
 def main():
-    print(f"Setting up Coordinator Node with virtual environment: {env_name}")
-    setup_coordinator()
-    verify_mpi4py()
-    print("\nCoordinator setup completed.")
+    print(f"Setting up nodes with virtual environment: {env_name}")
+    for node in nodes:
+        print(f"\n--- Setting up {node} ---")
+        for command in commands:
+            run_command_on_node(node, command)
+        verify_mpi4py(node)
+    print("\nCluster setup completed.")
 
 if __name__ == "__main__":
     main()
