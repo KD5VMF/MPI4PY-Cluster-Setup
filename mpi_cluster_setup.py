@@ -1,8 +1,9 @@
+
 import os
 import subprocess
 
 # Ask the user for the virtual environment name
-env_name = input("Enter the virtual environment name to use (default: envMPI): ").strip() or "envMPI"
+env_name = input("Enter the virtual environment name to use (default: envName): ").strip() or "envName"
 
 # Define your nodes
 nodes = [
@@ -23,8 +24,14 @@ commands = [
     # Install additional Python libraries
     f"~/{env_name}/bin/pip install mpi4py numpy scipy pandas matplotlib seaborn scikit-learn tensorflow tqdm",
     f"~/{env_name}/bin/pip install pillow requests flask fastapi sqlalchemy psycopg2-binary opencv-python-headless sympy h5py boto3",
-    # Install PyTorch with specific command for CUDA support
-    f"~/{env_name}/bin/pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121"
+    # Install PyTorch CPU-only
+    f"~/{env_name}/bin/pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu",
+    # Ensure proper PATH and LD_LIBRARY_PATH are set
+    "echo 'export PATH=$PATH:/usr/local/bin:/usr/bin' >> ~/.bashrc",
+    "echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/lib/x86_64-linux-gnu' >> ~/.bashrc",
+    "source ~/.bashrc",  # Reload bashrc
+    # Ensure /tmp permissions are correct
+    "sudo chmod 1777 /tmp",
 ]
 
 # Function to execute a command on a node via SSH
@@ -39,7 +46,8 @@ def run_command_on_node(node, command):
     if result.returncode == 0:
         print(f"[SUCCESS] {node}: {command}")
     else:
-        print(f"[ERROR] {node}: {command}\n{result.stderr}")
+        print(f"[ERROR] {node}: {command}
+{result.stderr}")
 
 # Function to verify the installation
 def verify_installation(node):
@@ -54,13 +62,15 @@ def verify_installation(node):
     if result.returncode == 0:
         print(f"[VERIFIED] {node}: mpi4py, numpy, scipy, pandas, matplotlib, tensorflow, torch versions: {result.stdout.strip()}")
     else:
-        print(f"[ERROR] {node}: Unable to verify installation\n{result.stderr}")
+        print(f"[ERROR] {node}: Unable to verify installation
+{result.stderr}")
 
 # Main program
 def main():
     print(f"Setting up nodes with virtual environment: {env_name}")
     for node in nodes:
-        print(f"\n--- Setting up {node} ---")
+        print(f"
+--- Setting up {node} ---")
         for command in commands:
             run_command_on_node(node, command)
         verify_installation(node)
