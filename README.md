@@ -65,6 +65,36 @@ For best performance, consider keeping matrix sizes within the available RAM lim
 
 ---
 
+## 🚀 Running the Programs
+
+### Password Cracker
+#### Single Node Execution:
+```bash
+mpirun -np 4 python3 password_cracker.py
+```
+- Replace `4` with the number of processes on your single node.
+
+#### Multi-Node Execution:
+```bash
+mpirun --hostfile ~/mpi_hosts -np 24 python3 password_cracker.py
+```
+- Replace `24` with the total number of processes across all nodes.
+
+### Matrix Multiplication
+#### Single Node Execution:
+```bash
+mpirun -np 4 python3 matrix_multiplication.py 2
+```
+- Replace `2` with the desired matrix size option (see matrix size table above).
+
+#### Multi-Node Execution:
+```bash
+mpirun --hostfile ~/mpi_hosts -np 24 python3 matrix_multiplication.py 5
+```
+- Replace `5` with the desired matrix size option.
+
+---
+
 ## 🚀 Setup Scripts
 
 ### 🛠️ Coordinator Node Setup (`coordinator_setup.py`)
