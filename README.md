@@ -33,6 +33,25 @@ This repository includes tools, programs, and documentation to set up and utiliz
 
 ---
 
+## 📏 Matrix Size Options
+
+| Option | Matrix Size |
+|--------|-------------|
+| 1      | 256 x 256   |
+| 2      | 512 x 512   |
+| 3      | 1024 x 1024 |
+| 4      | 2048 x 2048 |
+| 5      | 4096 x 4096 |
+| 6      | 4608 x 4608 |
+| 7      | 5120 x 5120 |
+| 8      | 6144 x 6144 |
+| 9      | 6656 x 6656 |
+| 10     | 7168 x 7168 |
+
+For options greater than 10, the matrix sizes increase by 512x512 increments.
+
+---
+
 ## 🚀 Setup Scripts
 
 ### 🛠️ Coordinator Node Setup (`coordinator_setup.py`)
@@ -92,18 +111,6 @@ The `mpi_cluster_setup.py` script simplifies the setup of worker nodes in the cl
 
 ---
 
-## 📏 Matrix Size Options
-
-| Option | Matrix Size |
-|--------|-------------|
-| 1      | 256 x 256   |
-| 2      | 512 x 512   |
-| 3      | 1024 x 1024 |
-| ...    | ...         |
-| 40     | 22,528 x 22,528 |
-
----
-
 ## 🎯 Example Outputs
 
 ### Password Cracker
@@ -153,4 +160,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ---
 
 ## ✒️ Attribution
-This setup, programs, and documentation were created by ChatGPT 4.0 in collaboration with Adam Figueroa, based on his current DeskPi Super6C and Raspberry Pi 5 cluster configuration.
+This setup, programs, and documentation were created by ChatGPT 4.0 in collaboration Adam Figueroa, based on the above DeskPi Super6C and Raspberry Pi 5 cluster configuration.
