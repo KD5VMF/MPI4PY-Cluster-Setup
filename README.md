@@ -1,9 +1,9 @@
 
 # 🖥️ MPI Distributed Computing Programs and Cluster Setup
 
-This project includes tools and programs to set up and utilize a Raspberry Pi-based MPI cluster for distributed computing. The repository demonstrates the following:
+This repository includes tools, programs, and documentation to set up and utilize a Raspberry Pi-based MPI cluster for distributed computing. The repository demonstrates the following:
 
-1. **Cluster Setup with `mpi_cluster_setup.py`**
+1. **Cluster Setup with `mpi_cluster_setup.py` (Workers) and `coordinator_setup.py` (Coordinator)**
    - Automates the setup of Python environments and dependencies across cluster nodes.
 
 2. **Distributed Computing Programs**
@@ -14,9 +14,7 @@ This project includes tools and programs to set up and utilize a Raspberry Pi-ba
 
 ## 📋 Cluster and Coordinator Node Setup
 
-### **Cluster Setup in Detail**
-
-This setup is based on the author's current configuration and serves as a guide for new users. 
+### **Cluster Overview**
 
 ### **Coordinator Node**
 - **Device**: Raspberry Pi 5
@@ -24,7 +22,7 @@ This setup is based on the author's current configuration and serves as a guide 
 - **Specifications**:
   - 8GB RAM
   - 512GB NVMe storage
-- Accessed via **Windows 11 CMD SSH**.
+- **Purpose**: Sets up the cluster and manages execution of distributed programs.
 
 ### **Cluster (Worker Nodes)**
 - **6 Raspberry Pi Compute Modules 4 (CM4)**:
@@ -35,60 +33,52 @@ This setup is based on the author's current configuration and serves as a guide 
 
 ---
 
-## 🚀 Full Setup Guide (New Cluster)
+## 🚀 Setup Scripts
 
-### **1. Preparing the Host File**
-The host file lists the IPs of all nodes and their configuration for MPI:
-1. Create the file on the Coordinator Node (Raspberry Pi 5):
-   ```bash
-   nano ~/mpi_hosts
-   ```
-2. Add the following content (adjust IPs as needed):
-   ```plaintext
-   192.168.0.191 slots=4  # Node 1
-   192.168.0.192 slots=4  # Node 2
-   192.168.0.193 slots=4  # Node 3
-   192.168.0.194 slots=4  # Node 4
-   192.168.0.195 slots=4  # Node 5
-   192.168.0.196 slots=4  # Node 6
-   ```
-3. Save and exit Nano (`Ctrl + O`, `Enter`, `Ctrl + X`).
+### 🛠️ Coordinator Node Setup (`coordinator_setup.py`)
+The `coordinator_setup.py` script automates the setup of the Coordinator Node (Raspberry Pi 5) by installing the necessary tools, configuring Python environments, and preparing it to manage the worker nodes.
 
-### **2. Generating SSH Keys on the Coordinator Node**
-1. Generate an SSH key (if not already created):
+#### How to Use
+1. **Copy `coordinator_setup.py` to the Coordinator Node**:
    ```bash
-   ssh-keygen -t rsa -b 2048
-   ```
-2. Press `Enter` to save the key in the default location (`~/.ssh/id_rsa`), and optionally set a passphrase.
-
-### **3. Copying SSH Keys to Worker Nodes**
-1. Use the following command to copy the key to each worker node:
-   ```bash
-   for NODE in 192.168.0.191 192.168.0.192 192.168.0.193 192.168.0.194 192.168.0.195 192.168.0.196; do
-       ssh-copy-id sysop@$NODE
-   done
-   ```
-2. Verify that passwordless SSH works:
-   ```bash
-   ssh sysop@192.168.0.191
+   scp coordinator_setup.py sysop@192.168.0.210:~/
    ```
 
-### **4. Running `mpi_cluster_setup.py`**
-The `mpi_cluster_setup.py` script simplifies the setup of Python and MPI across nodes.
-1. Copy the script to the Coordinator Node:
+2. **Run the script on the Coordinator Node**:
    ```bash
-   scp mpi_cluster_setup.py sysop@192.168.0.191:~/
+   python3 coordinator_setup.py
    ```
-2. Run the script on the Coordinator Node:
+
+3. The script performs the following:
+   - Updates and upgrades the system.
+   - Installs MPI, Python libraries, and SSH utilities.
+   - Creates a Python virtual environment and installs required libraries.
+   - Verifies the installation of key Python libraries.
+
+### 🛠️ Worker Node Setup (`mpi_cluster_setup.py`)
+The `mpi_cluster_setup.py` script simplifies the setup of worker nodes in the cluster. It installs Python and MPI dependencies across multiple nodes.
+
+#### How to Use
+1. **Copy `mpi_cluster_setup.py` to the Coordinator Node**:
+   ```bash
+   scp mpi_cluster_setup.py sysop@192.168.0.210:~/
+   ```
+
+2. **Run the script on the Coordinator Node**:
    ```bash
    python3 mpi_cluster_setup.py
    ```
+
+3. The script will:
+   - Update and upgrade all worker nodes.
+   - Install MPI, Python libraries, and create virtual environments.
+   - Verify the installation on all worker nodes.
 
 ---
 
 ## 📂 Deploying Programs to Worker Nodes
 
-1. Copy the programs (`password_cracker.py`, `matrix_multiplication.py`) to all worker nodes:
+1. Copy the distributed programs (`password_cracker.py`, `matrix_multiplication.py`) to all worker nodes:
    ```bash
    for NODE in 192.168.0.191 192.168.0.192 192.168.0.193 192.168.0.194 192.168.0.195 192.168.0.196; do
        scp password_cracker.py matrix_multiplication.py sysop@$NODE:~/
@@ -102,34 +92,6 @@ The `mpi_cluster_setup.py` script simplifies the setup of Python and MPI across 
 
 ---
 
-## 🖥️ Running the Programs
-
-### Password Cracker
-#### Single Node Execution:
-```bash
-mpirun -np 4 python3 password_cracker.py
-```
-
-#### Multi-Node Execution:
-```bash
-mpirun --hostfile ~/mpi_hosts -np 24 python3 password_cracker.py
-```
-
-### Matrix Multiplication
-#### Single Node Execution:
-```bash
-mpirun -np 4 python3 matrix_multiplication.py 2
-```
-- Replace `2` with the matrix size option (see matrix size table below).
-
-#### Multi-Node Execution:
-```bash
-mpirun --hostfile ~/mpi_hosts -np 24 python3 matrix_multiplication.py 5
-```
-- Replace `5` with the matrix size option.
-
----
-
 ## 📏 Matrix Size Options
 
 | Option | Matrix Size |
@@ -137,7 +99,6 @@ mpirun --hostfile ~/mpi_hosts -np 24 python3 matrix_multiplication.py 5
 | 1      | 256 x 256   |
 | 2      | 512 x 512   |
 | 3      | 1024 x 1024 |
-| 4      | 2048 x 2048 |
 | ...    | ...         |
 | 40     | 22,528 x 22,528 |
 
@@ -181,7 +142,7 @@ Encryption Time: 0.001234 seconds
 
 ---
 
-## 🛠️ Contributing
+## ⚡ Contributing
 Contributions are welcome! Feel free to open an issue or submit a pull request.
 
 ---
@@ -192,4 +153,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ---
 
 ## ✒️ Attribution
-This setup, programs, and documentation were created by ChatGPT 4.0 in collaboration with Adam Figueroa, based on the current DeskPi Super6C and Raspberry Pi 5 cluster configuration.
+This setup, programs, and documentation were created by ChatGPT 4.0 in collaboration with Adam Figueroa, based on his current DeskPi Super6C and Raspberry Pi 5 cluster configuration.
