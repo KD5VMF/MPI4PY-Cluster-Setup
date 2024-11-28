@@ -3,7 +3,7 @@ import os
 import subprocess
 
 # Ask the user for the virtual environment name
-env_name = input("Enter the virtual environment name to use (default: envMPI): ").strip() or "envMPI"
+env_name = input("Enter the virtual environment name to use (default: envName): ").strip() or "envName"
 
 # Define your nodes
 nodes = [
@@ -44,12 +44,29 @@ def run_commands_on_node(node):
         else:
             print(f"[ERROR] {node}: {command}\n{result.stderr}")
 
+# Function to verify the installation of mpi4py and environment
+def verify_installation_on_node(node):
+    command = f"ssh sysop@{node} '~/{env_name}/bin/python3 -c \'import mpi4py; print(mpi4py.__version__)\''"
+    print(f"Verifying mpi4py installation on {node}")
+    result = subprocess.run(
+        command,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
+    if result.returncode == 0:
+        print(f"[VERIFIED] {node}: mpi4py version: {result.stdout.strip()}")
+    else:
+        print(f"[ERROR] {node}: Unable to verify mpi4py\n{result.stderr}")
+
 # Main program
 def main():
     print(f"Setting up worker nodes with virtual environment: {env_name}")
     for node in nodes:
         print(f"\n--- Setting up {node} ---")
         run_commands_on_node(node)
+        verify_installation_on_node(node)
 
 if __name__ == "__main__":
     main()
