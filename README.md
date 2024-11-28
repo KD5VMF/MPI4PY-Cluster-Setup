@@ -47,8 +47,21 @@ This repository includes tools, programs, and documentation to set up and utiliz
 | 8      | 6144 x 6144 |
 | 9      | 6656 x 6656 |
 | 10     | 7168 x 7168 |
+| 11     | 7680 x 7680 |
+| 12     | 8192 x 8192 |
+| 13     | 8704 x 8704 |
+| 14     | 9216 x 9216 |
+| 15     | 9728 x 9728 |
+| 16     | 10240 x 10240 |
+| 17     | 10752 x 10752 |
+| 18     | 11264 x 11264 |
+| 19     | 11776 x 11776 |
+| 20     | 12288 x 12288 |
 
-For options greater than 10, the matrix sizes increase by 512x512 increments.
+### Memory Considerations
+The cluster, with each node having 4GB of RAM, performs optimally for options up to **11 (7680 x 7680)**. If **option 12 (8192 x 8192)** or larger is selected, the memory requirements may exceed the available RAM per node. This can trigger the use of swap space, significantly slowing down the program's execution due to disk I/O bottlenecks.
+
+For best performance, consider keeping matrix sizes within the available RAM limits of your nodes.
 
 ---
 
@@ -160,4 +173,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ---
 
 ## ✒️ Attribution
-This setup, programs, and documentation were created by ChatGPT 4.0 in collaboration Adam Figueroa, based on the above DeskPi Super6C and Raspberry Pi 5 cluster configuration.
+This setup, programs, and documentation were created by ChatGPT 4.0 in collaboration with Adam Figueroa, based on the above DeskPi Super6C and Raspberry Pi 5 cluster configuration.
