@@ -1,4 +1,3 @@
-
 # MPI Cluster Utilities
 
 Welcome to the **MPI Cluster Utilities**! This repository is designed to assist you in managing and testing a Raspberry Pi cluster with ease. With this toolkit, you can set up, manage, and test your cluster, as well as perform computational tasks like matrix multiplication and password cracking.
