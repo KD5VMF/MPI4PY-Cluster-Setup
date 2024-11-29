@@ -75,13 +75,14 @@ To distribute a program (e.g., `matrix_multiplication.py`) to all worker nodes:
 
 ---
 
-## Your Cluster Setup
+## Cluster Setup Used in this project
 
 ### Hardware
 - **Coordinator Node: Raspberry Pi 5**
-  - **Case:** DeskPi Super6C Case
+  - **Case:** Argon ONE V3 M.2 NVME PCIE Case
   - **Storage:** 512GB NVMe
 - **Worker Nodes: 6 CM4 Modules**
+  - **Case** Deskpi Super6c 
   - **Storage:** 256GB NVMe per module
   - **Network Configuration:** Static IPs in the 192.168.0.191-196 range.
 
