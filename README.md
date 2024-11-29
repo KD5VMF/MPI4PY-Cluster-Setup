@@ -1,89 +1,113 @@
 
-# MPI4PY Cluster Setup and Example Programs
+# Raspberry Pi MPI Cluster Setup
 
-This repository includes the necessary setup program, example programs for distributed computing, and detailed instructions for working with MPI4PY on a Raspberry Pi cluster.
+Welcome to the **Raspberry Pi MPI Cluster Setup** guide. This project provides a streamlined Python program to help users configure a fully functional MPI cluster using Raspberry Pi devices. The program automates the entire process, making it easy for beginners and experienced users alike.
 
-## Table of Contents
-- [Overview](#overview)
-- [Setup Instructions](#setup-instructions)
-- [Example Programs](#example-programs)
-- [Usage](#usage)
+## Features
 
-## Overview
+- **Coordinator and Worker Node Setup**: Automatically configures the Raspberry Pi acting as the coordinator and adds up to 24 worker nodes.
+- **Automated Environment Management**: Sets up a virtual Python environment (`envMPI`) on all nodes, installs necessary dependencies, and ensures compatibility with `mpi4py`.
+- **Hostfile Generation**: Automatically creates an MPI-compatible `hostfile` with slots configuration for worker nodes.
+- **SSH Key Management**: Optionally generates SSH keys for seamless communication between the coordinator and worker nodes.
+- **Performance Testing**: Includes two example programs:
+  - **Matrix Multiplication Benchmark**: Tests MPI-based distributed matrix multiplication.
+  - **Password Cracker**: Demonstrates parallel processing by distributing password-cracking tasks across nodes.
 
-This repository supports:
-1. Setting up the coordinator node and worker nodes in a Raspberry Pi cluster.
-2. Generating SSH keys for secure communication.
-3. Creating and distributing an `mpi_hosts` file for MPI execution.
-4. Installing required Python packages, including `mpi4py`, for distributed computation.
+## How It Works
 
-## Setup Instructions
+### 1. Setup MPI System
 
-### Prerequisites
+Run the `setup_mpi_system.py` program to configure your cluster. The program prompts the user for input to guide the process and performs the following steps:
 
-- All Raspberry Pi nodes should have an operating system installed and networked.
-- The main coordinator node (e.g., `PI5`) should be accessible via SSH to all worker nodes.
+1. **Set Up the Coordinator Node**
+    - Updates the system.
+    - Installs OpenMPI and Python packages.
+    - Creates a virtual environment (`envMPI`) and installs necessary Python libraries.
 
-### Running the Setup Program
+2. **Set Up Worker Nodes**
+    - Adds up to 24 worker nodes based on the user’s configuration.
+    - Automatically configures the `hostfile` with slots=4 for each node.
 
-1. Place `setup_cluster.py` on the coordinator node.
-2. Execute the program:
-   ```bash
-   python3 setup_cluster.py
-   ```
-3. Follow the prompts to:
-   - Set up the coordinator node.
-   - Add worker nodes by specifying their IP addresses and names.
-   - Generate and distribute SSH keys.
-   - Configure the environment (default: `envMPI`).
+3. **SSH Key Management**
+    - Optionally generates new SSH keys and distributes them to worker nodes.
 
-### Host File Format
+4. **Verify Setup**
+    - Confirms successful installation of `mpi4py` and OpenMPI on all nodes.
 
-The generated `mpi_hosts` file will look like:
+### 2. Run Example Programs
+
+Two example programs are provided to test your cluster:
+
+#### **Matrix Multiplication Benchmark**
+This program performs distributed matrix multiplication using MPI to measure the performance of your cluster.
+
+- Run with:
+  ```bash
+  mpirun --hostfile ~/mpi_hosts -np <number_of_processes> ~/envMPI/bin/python3 ~/matrix_multiplication.py <matrix_size_option>
+  ```
+  Replace `<number_of_processes>` with the total number of processes to use and `<matrix_size_option>` with a number between 1 and 40 to select the matrix size.
+
+#### **Password Cracker**
+A parallel password-cracking program that demonstrates distributed processing.
+
+- Run with:
+  ```bash
+  mpirun --hostfile ~/mpi_hosts -np <number_of_processes> ~/envMPI/bin/python3 ~/password_cracker.py
+  ```
+
+## Installation Steps
+
+1. Clone this repository:
+    ```bash
+    git clone <repository_link>
+    ```
+
+2. Navigate to the project directory:
+    ```bash
+    cd mpi_cluster_setup
+    ```
+
+3. Run the setup program:
+    ```bash
+    python3 setup_mpi_system.py
+    ```
+
+## Requirements
+
+- **Hardware**:
+  - Raspberry Pi 5 (Coordinator Node).
+  - DeskPi Super6C cluster with up to 6 CM4 modules (Worker Nodes).
+
+- **Software**:
+  - Raspberry Pi OS Lite (64-bit) for all nodes.
+
+- **Network**:
+  - All nodes must be connected to the same local network.
+
+## Example Output
+
+Below is an example of the matrix multiplication program running on a cluster:
+
 ```
-192.168.0.191 slots=4
-192.168.0.192 slots=4
-192.168.0.193 slots=4
-...
+======================================================================
+MPI Setup Test: Communication Across All Nodes
+======================================================================
+Hello from Rank 0 on node1
+Hello from Rank 1 on node1
+Hello from Rank 2 on node1
+Hello from Rank 3 on node1
+Hello from Rank 4 on node2
+Hello from Rank 5 on node2
+======================================================================
+Total MPI processes: 6
+MPI test completed successfully!
+======================================================================
 ```
 
-### Verifying Installation
+## Credits
 
-Run the test program `test_mpi.py` to ensure that the MPI environment is correctly configured:
-```bash
-mpirun --hostfile ~/mpi_hosts -np 6 ~/envMPI/bin/python3 ~/test_mpi.py
-```
-
-## Example Programs
-
-### 1. Matrix Multiplication
-
-The program `matrix_multiplication.py` performs distributed matrix multiplication using MPI4PY.
-
-Run the program with:
-```bash
-mpirun --hostfile ~/mpi_hosts -np <number_of_processes> ~/envMPI/bin/python3 matrix_multiplication.py <matrix_size_option>
-```
-
-#### Matrix Size Options:
-- Option 1: 256x256
-- Option 2: 512x512
-- ...
-- Option 10: 7168x7168
-
-### 2. Password Cracker
-
-The program `password_cracker.py` demonstrates a distributed brute-force password-cracking example.
-
-Run the program with:
-```bash
-mpirun --hostfile ~/mpi_hosts -np <number_of_processes> ~/envMPI/bin/python3 password_cracker.py
-```
-
-## Usage
-
-Refer to the program prompts for each example. Detailed performance metrics and node responsibilities are displayed upon execution.
+This setup, programs, and documentation were created by **ChatGPT 4.0 in collaboration with Adam Figueroa**, based on the above DeskPi Super6C and Raspberry Pi 5 cluster configuration.
 
 ---
 
-This setup, programs, and documentation were created collaboratively by ChatGPT 4.0 and Adam Figueroa.
+For further assistance, please open an issue or contact the maintainers of this repository.
