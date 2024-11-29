@@ -1,77 +1,130 @@
 from mpi4py import MPI
-import itertools
-import string
-import hashlib
+import numpy as np
 import time
+import sys
+import psutil
+
+# ASCII Art Line Width
+LINE_WIDTH = 70
+
+# Function to check memory and detect if swap is used
+def check_memory():
+    memory = psutil.virtual_memory()
+    swap = psutil.swap_memory()
+    if swap.used > 0:
+        return False, f"[ERROR] Program terminated: Swap memory is in use (Swap used: {swap.used // (1024 ** 2)} MB). Ensure sufficient RAM is available."
+    return True, f"[INFO] Memory Check Passed: RAM available {memory.available // (1024 ** 2)} MB."
+
+# Function to create ASCII boxed sections
+def create_ascii_box(title, content, width=LINE_WIDTH):
+    title_line = f"+{'-' * (width - 2)}+"
+    box = [title_line, f"| {title.center(width - 4)} |", title_line]
+    for line in content:
+        box.append(f"| {line.ljust(width - 4)} |")
+    box.append(title_line)
+    return "\n".join(box)
+
+# Function to format computation times
+def format_times(times):
+    formatted = []
+    for i, time in enumerate(times):
+        formatted.append(f"[Rank {i}] Time: {time:.4f} seconds")
+    return formatted
+
+# Parse matrix size from command-line arguments
+matrix_size_option = int(sys.argv[1])
+matrix_sizes = {
+    1: 256, 2: 512, 3: 1024, 4: 2048, 5: 4096,
+    6: 4608, 7: 5120, 8: 6144, 9: 6656, 10: 7168,
+    11: 8192, 12: 9216, 13: 10240, 14: 11264, 15: 12288,
+    16: 13312, 17: 14336, 18: 15360, 19: 16384, 20: 17408,
+    21: 18432, 22: 19456, 23: 20480, 24: 21504, 25: 22528
+}
+matrix_size = matrix_sizes.get(matrix_size_option, 512)
 
 # MPI setup
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 
-# Password characters (you can extend this to include uppercase, symbols, etc.)
-CHARACTERS = string.ascii_lowercase + string.digits
-
-def hash_password(password):
-    """Hash the password using SHA-256."""
-    return hashlib.sha256(password.encode()).hexdigest()
-
-def generate_passwords(length, start, end):
-    """Generate passwords of a given length for this process."""
-    all_passwords = itertools.product(CHARACTERS, repeat=length)
-    return itertools.islice(all_passwords, start, end)
-
-if rank == 0:
-    print("="*70)
-    print("Password Cracker (MPI) with User Input and Optimized Algorithm")
-    print("="*70)
-    target_password = input("Enter the password to crack: ").strip()
-    target_hash = hash_password(target_password)
-    print(f"[INFO] Target password hash: {target_hash}")
-    print(f"[INFO] Starting password cracking...")
-    print("="*70)
-else:
-    target_hash = None
-
-# Broadcast the target hash to all processes
-target_hash = comm.bcast(target_hash, root=0)
-
-# Auto-detection loop
-start_time = time.time()
-password_found = None
-password_length = 1
-
-while password_found is None:
+# Memory check
+memory_ok, message = check_memory()
+if not memory_ok:
     if rank == 0:
-        print(f"[INFO] Trying passwords of length {password_length}...")
-
-    # Calculate workload distribution
-    total_combinations = len(CHARACTERS) ** password_length
-    chunk_size = total_combinations // size
-    start_index = rank * chunk_size
-    end_index = total_combinations if rank == size - 1 else start_index + chunk_size
-
-    # Generate passwords for this process
-    for password_tuple in generate_passwords(password_length, start_index, end_index):
-        password = ''.join(password_tuple)
-        if hash_password(password) == target_hash:
-            password_found = password
-            break
-
-    # Gather results from all processes
-    password_found = comm.allreduce(password_found if password_found else "", op=MPI.SUM)
-    password_found = password_found if password_found else None
-
-    if password_found is None:
-        password_length += 1
-
-end_time = time.time()
+        print(create_ascii_box("PROGRAM TERMINATION", [message]))
+    sys.exit()
 
 if rank == 0:
-    print("="*70)
-    if password_found:
-        print(f"[SUCCESS] Password found: {password_found}")
-        print(f"[INFO] Time taken: {end_time - start_time:.2f} seconds")
-    else:
-        print("[ERROR] Password not found.")
-    print("="*70)
+    print(create_ascii_box("STARTING MATRIX MULTIPLICATION", [message]))
+
+# Divide workload among ranks
+rows_per_process = matrix_size // size
+start_row = rank * rows_per_process
+end_row = (rank + 1) * rows_per_process - 1
+
+# Create random matrices A and B (root only)
+A = None
+B = None
+if rank == 0:
+    A = np.random.rand(matrix_size, matrix_size)
+    B = np.random.rand(matrix_size, matrix_size)
+
+# Scatter rows of A among processes
+A_local = np.zeros((rows_per_process, matrix_size))
+comm.Scatterv([A, rows_per_process * matrix_size, MPI.DOUBLE], A_local, root=0)
+
+# Broadcast matrix B to all processes
+B = comm.bcast(B, root=0)
+
+# Perform local matrix multiplication
+start_time = time.time()
+C_local = np.dot(A_local, B)
+computation_time = time.time() - start_time
+
+# Gather computation times and results
+computation_times = comm.gather(computation_time, root=0)
+if rank == 0:
+    # Combine partial results
+    C = np.vstack(comm.gather(C_local, root=0))
+else:
+    comm.gather(C_local, root=0)
+
+# Calculate performance metrics
+if rank == 0:
+    total_operations = 2 * (matrix_size ** 3)
+    total_time = max(computation_times)
+    flops = total_operations / total_time
+    tops = flops / 1e12
+    gflops = flops / 1e9
+    avg_gflops_per_rank = gflops / size
+
+    # Format computation times
+    formatted_times = format_times(computation_times)
+
+    # Print process responsibilities
+    process_responsibilities = [
+        f"[Rank {i}] Responsible for rows {i * rows_per_process} to {(i + 1) * rows_per_process - 1}"
+        for i in range(size)
+    ]
+    print(create_ascii_box("PROCESS RESPONSIBILITIES", process_responsibilities))
+
+    # Print matrix multiplication summary
+    summary = [
+        f"Matrix size: {matrix_size} x {matrix_size}",
+        f"Number of processes: {size}",
+        f"Total computation time (max across nodes): {total_time:.4f} seconds",
+        f"Final result matrix shape: {C.shape}",
+        f"Total Floating-Point Operations: {total_operations:,} operations",
+        f"Achieved Performance: {tops:.4f} TOPS",
+        f"Achieved Performance: {gflops:.2f} GFLOPS"
+    ]
+    print(create_ascii_box("MATRIX MULTIPLICATION COMPLETED", summary))
+
+    # Print per rank data
+    rank_data = [
+        f"Operations per rank: {total_operations // size:,}",
+        f"FLOPS per rank: {int(flops // size):,}",
+        f"Average GFLOPS per rank: {avg_gflops_per_rank:.2f} GFLOPS",
+        f"Time per operation: {total_time / total_operations:.10e} seconds"
+    ]
+    print(create_ascii_box("PER RANK DATA", rank_data))
