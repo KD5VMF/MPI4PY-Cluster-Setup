@@ -191,6 +191,71 @@ def explore_new_terrain(self):
 
 ## Examples
 
+### General Ways to Run World_Simulator100.py
+
+Here are various ways to run the program, demonstrating its flexibility and utility:
+
+- **Default Simulation:**
+  ```bash
+  $ python World_Simulator100.py
+  ```
+  This runs the simulation with default parameters.
+
+- **Custom Number of Entities:**
+  ```bash
+  $ python World_Simulator100.py --entities 200
+  ```
+  Specify the number of entities in the world.
+
+- **Set Maximum Iterations:**
+  ```bash
+  $ python World_Simulator100.py --iterations 5000
+  ```
+  Control the number of iterations for the simulation.
+
+- **Enable Debug Mode:**
+  ```bash
+  $ python World_Simulator100.py --debug
+  ```
+  Outputs detailed logs for debugging.
+
+- **Use MPI for Parallel Execution:**
+  ```bash
+  $ mpirun -n 4 python World_Simulator100.py
+  ```
+  Distributes the workload across 4 processes.
+
+- **Enable Rapid Knowledge Sharing:**
+  ```bash
+  $ python World_Simulator100.py --share-knowledge
+  ```
+  Accelerates the dissemination of discovered knowledge.
+
+- **Run with Custom Learning Rate and Exploration:**
+  ```bash
+  $ python World_Simulator100.py --lr 0.0005 --epsilon 0.2
+  ```
+
+- **Save Simulation State:**
+  ```bash
+  $ python World_Simulator100.py --save
+  ```
+  Saves the current world state to a file.
+
+- **Load a Saved State:**
+  ```bash
+  $ python World_Simulator100.py --load
+  ```
+  Loads a previously saved simulation state.
+
+- **Run with Energy-Based Decisions:**
+  ```bash
+  $ python World_Simulator100.py --energy-factor 1.2
+  ```
+  Alters how energy affects decision-making.
+
+---
+
 ### Example 1: Basic Simulation
 
 ```bash
