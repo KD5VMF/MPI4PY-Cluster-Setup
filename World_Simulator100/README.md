@@ -199,9 +199,31 @@ $ mpirun -n 4 python World_Simulator100.py --entities 50 --iterations 1000
 
 ### Example 2: Advanced RL Training
 
-Train entities with custom parameters:
+Train entities with a range of custom reinforcement learning parameters to experiment with different learning strategies and outcomes.
 
-```bash
+**Usage Examples:**
+
+- Standard Learning Rate and Exploration:
+  ```bash
+  $ mpirun -n 8 python World_Simulator100.py --lr 0.0005 --epsilon 0.1
+  ```
+
+- High Learning Rate for Rapid Adaptation:
+  ```bash
+  $ mpirun -n 8 python World_Simulator100.py --lr 0.005 --epsilon 0.1
+  ```
+
+- Low Exploration for Stable Learning:
+  ```bash
+  $ mpirun -n 8 python World_Simulator100.py --lr 0.0005 --epsilon 0.01
+  ```
+
+- Adaptive Exploration with Decay:
+  ```bash
+  $ mpirun -n 8 python World_Simulator100.py --lr 0.0005 --epsilon_decay 0.995
+  ```
+
+Modify these parameters as needed to test the effects of learning rate (`--lr`) and exploration (`--epsilon` or `--epsilon_decay`) on the agents' behaviors.bash
 $ mpirun -n 8 python World_Simulator100.py --lr 0.0005 --epsilon 0.1
 ```
 
