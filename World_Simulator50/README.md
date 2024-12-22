@@ -1,11 +1,8 @@
-
 # Enhanced World Simulation
 
 ![License](https://img.shields.io/github/license/yourusername/EnhancedWorldSimulation)
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)
 ![MPI](https://img.shields.io/badge/MPI-Implemented-brightgreen.svg)
-
-![Simulation Overview](assets/simulation_overview.png)
 
 ## Table of Contents
 
@@ -23,8 +20,6 @@
 ## Introduction
 
 Welcome to the **Enhanced World Simulation**, a sophisticated and dynamic simulation environment that models a complex world populated by multiple entities. These entities interact, gather resources, discover knowledge, create items, establish homes and towns, initiate space flights, and manage extensive infrastructure and societal structures. Leveraging **Reinforcement Learning (Deep Q-Networks)** and **MPI (Message Passing Interface)** for parallel processing, this simulation provides an intricate and scalable platform for studying emergent behaviors and societal evolution.
-
-![Entities Interaction](assets/entities_interaction.png)
 
 ## Features
 
@@ -44,19 +39,15 @@ Welcome to the **Enhanced World Simulation**, a sophisticated and dynamic simula
   
 - **Parallel Processing with MPI:** Scale the simulation efficiently across multiple nodes and processes, handling thousands of entities seamlessly.
 
-![Infrastructure Development](assets/infrastructure_development.png)
-
 ## Architecture
 
 The simulation is built upon a modular architecture that combines object-oriented programming with reinforcement learning techniques. Here's an overview of the core components:
-
-![Architecture Diagram](assets/architecture_diagram.png)
 
 - **Entity Class:** Represents individual entities with attributes like health, intelligence, resources, skills, and knowledge.
   
 - **ActionModel (DQN):** A neural network model that predicts Q-values for possible actions, guiding entities' decision-making processes.
   
-- **Prioritized Replay Buffer:** Stores experiences for training the DQN, prioritizing important transitions to enhance learning efficiency.
+- **Replay Buffer:** Stores experiences for training the DQN, prioritizing important transitions to enhance learning efficiency.
   
 - **MPI Integration:** Distributes the simulation workload across multiple nodes and processes, enabling high scalability and performance.
   
@@ -94,7 +85,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-*If `requirements.txt` is not provided, you can install the necessary packages manually:*
+If `requirements.txt` is not provided, you can install the necessary packages manually:
 
 ```bash
 pip install mpi4py torch numpy
