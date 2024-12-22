@@ -1,6 +1,6 @@
 # World Simulator 100
 
-Welcome to **World Simulator 100**! This project is a detailed simulation platform designed for building complex worlds with entities, resources, and dynamic interactions driven by reinforcement learning and parallel computation using MPI.
+Welcome to **World Simulator 100**! This project is an advanced simulation platform designed for building, observing, and analyzing dynamic virtual worlds. Using a combination of reinforcement learning (RL), multi-agent systems, and parallel computation with MPI, this program models complex interactions, resource management, and societal evolution.
 
 ---
 
@@ -8,36 +8,66 @@ Welcome to **World Simulator 100**! This project is a detailed simulation platfo
 
 ## Features
 
-- **Reinforcement Learning:** Built-in neural networks for decision-making.
-- **Multi-Agent Simulation:** Entities interact and evolve within a virtual world.
-- **Global Knowledge Sharing:** Distributed discovery and sharing of knowledge.
-- **Extensive Roles and Infrastructure:** Simulate societies with various roles, infrastructures, and economic activities.
-- **Scalable:** Supports parallel computation with MPI to handle large-scale simulations.
+- **Multi-Agent RL:** Each agent in the world uses reinforcement learning to make decisions based on its environment.
+- **Dynamic Knowledge Sharing:** Entities discover and share knowledge dynamically.
+- **Complex World Infrastructure:** Includes detailed roles, resources, and infrastructures like transportation, utilities, and more.
+- **Parallel Simulation:** MPI enables scalability for large simulations across multiple processors or nodes.
+- **Customizable Entities:** Define specific behaviors, roles, and attributes for each agent in the simulation.
+- **Event-Driven Evolution:** Entities react to events, disasters, and opportunities in real-time.
 
 ---
 
 ## Table of Contents
 
-1. [Getting Started](#getting-started)
-2. [Installation](#installation)
-3. [Usage](#usage)
-4. [Configuration](#configuration)
-5. [Contributing](#contributing)
-6. [License](#license)
+1. [Introduction](#introduction)
+2. [How It Works](#how-it-works)
+3. [Getting Started](#getting-started)
+4. [Installation](#installation)
+5. [Usage](#usage)
+6. [Core Components](#core-components)
+7. [Simulation Parameters](#simulation-parameters)
+8. [Advanced Customization](#advanced-customization)
+9. [Examples](#examples)
+10. [Contributing](#contributing)
+11. [License](#license)
+
+---
+
+## Introduction
+
+World Simulator 100 allows users to explore the behavior of entities in a simulated environment, complete with learning algorithms and complex interactions. From building cities to initiating space travel, this simulator provides endless possibilities for experimentation.
+
+### Objectives
+
+- Study emergent behaviors in simulated societies.
+- Test reinforcement learning algorithms in dynamic environments.
+- Analyze the impact of knowledge sharing and collaboration.
+- Design infrastructure systems and measure their efficiency.
+
+---
+
+## How It Works
+
+The simulation revolves around entities that:
+
+1. **Perceive:** Gather data about their environment.
+2. **Learn:** Use RL models to optimize decision-making.
+3. **Act:** Execute actions like exploring, building, or trading.
+4. **Collaborate:** Share resources and knowledge.
+
+The environment evolves based on entity actions and external events, such as natural disasters or technological advancements.
 
 ---
 
 ## Getting Started
 
-World Simulator 100 is designed for researchers, hobbyists, and simulation enthusiasts. You can create complex societies, simulate their evolution, and analyze outcomes.
+This guide assumes familiarity with Python and reinforcement learning concepts.
 
 ### Prerequisites
 
-- Python 3.8 or higher
-- `mpi4py`
-- `torch`
-- `numpy`
-- Basic knowledge of Python and reinforcement learning is recommended.
+- Python 3.8 or higher.
+- MPI library (`mpich` or equivalent).
+- Essential Python libraries: `torch`, `mpi4py`, `numpy`, and `json`.
 
 ---
 
@@ -52,29 +82,16 @@ $ cd world-simulator-100
 
 ### 2. Install Dependencies
 
-Use the following command to install required dependencies:
-
 ```bash
 $ pip install -r requirements.txt
 ```
 
-Dependencies:
-- mpi4py
-- torch
-- numpy
-
 ### 3. Setup MPI
 
-Ensure MPI is installed on your system. For Ubuntu:
+For Ubuntu:
 
 ```bash
 $ sudo apt-get install mpich
-```
-
-Verify installation:
-
-```bash
-$ mpirun --version
 ```
 
 ---
@@ -83,31 +100,15 @@ $ mpirun --version
 
 ### Running the Simulation
 
-Launch the simulation using MPI to utilize parallel processing:
+Run the program using MPI:
 
 ```bash
 $ mpirun -n 4 python World_Simulator100.py
 ```
 
-Here:
-- `-n 4` specifies the number of processes.
-- Replace `4` with the number of cores or nodes available.
+This initializes the simulation with 4 parallel processes. Modify `-n` based on your system.
 
-### Simulation Overview
-
-- **Entities:** Each entity has attributes such as health, mood, intelligence, and resources.
-- **Actions:** Entities perform actions like gathering, building, exploring, and trading.
-- **Knowledge Sharing:** Knowledge discovered by one entity can be shared globally.
-
-### Example Output
-
-```plaintext
-[YEAR 2025] Entity_1 discovered advanced agriculture.
-[YEAR 2026] Entity_2 built a solar farm.
-[YEAR 2027] Natural disaster near (25, -14).
-```
-
-### Save and Load
+### Save and Load States
 
 - Save the simulation state:
   ```bash
@@ -120,42 +121,103 @@ Here:
 
 ---
 
-## Configuration
+## Core Components
 
-### Parameters
+### Entities
 
-You can modify simulation parameters in the `World_Simulator100.py` file:
+Entities represent the core agents in the world. Each has attributes like:
 
-| Parameter      | Description                                | Default Value |
-|----------------|--------------------------------------------|---------------|
-| `NUM_ENTITIES` | Number of entities to initialize           | `100`         |
-| `GAMMA`        | Discount factor for RL                     | `0.99`        |
-| `EPSILON`      | Initial exploration rate                   | `1.0`         |
-| `LR`           | Learning rate for neural network training  | `0.001`       |
+- **Health**
+- **Energy**
+- **Resources**
+- **Knowledge**
+- **Skills**
+- **Roles** (e.g., Farmer, Warrior, Scientist)
 
-### Customizing Entities
+### Actions
 
-Entities can be customized with unique attributes:
-- Roles: Farmer, Warrior, Scientist, etc.
-- Specializations: Mining, Architecture, Diplomacy, etc.
+Entities can perform actions such as:
 
-Example snippet:
+- **Gathering:** Collect food, gold, or influence.
+- **Building:** Construct homes, towns, or infrastructure.
+- **Exploring:** Discover new lands or resources.
+- **Trading:** Exchange goods with other entities.
+- **Learning:** Enhance skills or acquire knowledge.
+
+### Knowledge Sharing
+
+Discoveries made by one entity can be shared globally, allowing for technological and cultural evolution.
+
+---
+
+## Simulation Parameters
+
+| Parameter          | Description                                | Default Value |
+|--------------------|--------------------------------------------|---------------|
+| `NUM_ENTITIES`     | Number of entities to initialize           | `100`         |
+| `GAMMA`            | Discount factor for RL                     | `0.99`        |
+| `EPSILON`          | Initial exploration rate                   | `1.0`         |
+| `LR`               | Learning rate for neural network training  | `0.001`       |
+| `MAX_ITERATIONS`   | Maximum steps per simulation               | `10000`       |
+
+---
+
+## Advanced Customization
+
+You can create entirely new simulations by customizing entities, roles, and actions.
+
+### Adding a New Role
+
+Define a new role with specific capabilities:
 
 ```python
-entity = Entity(
-    name="Entity_X",
-    role="Scientist",
-    health=100,
-    location=(0, 0),
-    specialization="Engineering"
-)
+class Merchant(Entity):
+    def trade(self):
+        # Custom trading logic
+        pass
+```
+
+### Modifying Actions
+
+Extend existing actions or create new ones:
+
+```python
+def explore_new_terrain(self):
+    # Exploration logic
+    pass
+```
+
+---
+
+## Examples
+
+### Example 1: Basic Simulation
+
+```bash
+$ mpirun -n 4 python World_Simulator100.py --entities 50 --iterations 1000
+```
+
+### Example 2: Advanced RL Training
+
+Train entities with custom parameters:
+
+```bash
+$ mpirun -n 8 python World_Simulator100.py --lr 0.0005 --epsilon 0.1
+```
+
+### Example 3: Custom Knowledge Sharing
+
+Enable rapid knowledge dissemination:
+
+```bash
+$ python World_Simulator100.py --share-knowledge
 ```
 
 ---
 
 ## Contributing
 
-We welcome contributions to improve and expand World Simulator 100! To contribute:
+Contributions are welcome! Follow these steps:
 
 1. Fork the repository.
 2. Create a new branch.
@@ -172,8 +234,6 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 ## Contact
 
-For questions or support, contact us at: [support@worldsim100.com](mailto:support@worldsim100.com)
-
----
+For support, contact us at [support@worldsim100.com](mailto:support@worldsim100.com).
 
 ![Thank You](https://via.placeholder.com/600x150?text=Thank+You+for+Using+World+Simulator+100)
