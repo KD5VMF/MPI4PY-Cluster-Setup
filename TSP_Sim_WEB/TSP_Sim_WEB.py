@@ -60,6 +60,7 @@ app = Flask(__name__) if rank == 0 else None
 # Shared simulation data
 simulation_data = {
     "running": False,
+    "solved": False,
     "year": 0,
     "stats": {
         "steps": 0,
@@ -68,7 +69,7 @@ simulation_data = {
         "population_size": 100,
         "num_cities": 20,
         "adjustment_rate": 0.1,
-        "iterations": 1000,
+        "iterations": 1000,  # This will be ignored for infinite iterations
     },
     "best_route": [],
     "cities": [],
@@ -97,6 +98,7 @@ html_template = """
         .card { margin-bottom: 20px; }
         canvas { width: 100% !important; max-height: 500px !important; }
         .btn-group { margin-bottom: 20px; }
+        .solved { background-color: #28a745 !important; color: white !important; }
     </style>
 </head>
 <body>
@@ -225,7 +227,7 @@ html_template = """
                 datasets: [{
                     label: 'Best Route',
                     data: [],
-                    backgroundColor: 'orange', // Set point color to yellow
+                    backgroundColor: 'orange', // Set point color to orange
                     borderColor: 'black', // Set line color
                     showLine: true,
                     fill: false,
@@ -303,6 +305,15 @@ html_template = """
                     data.recent_events.slice(-10).reverse().forEach(function(event) {
                         eventsList.append('<li>' + event + '</li>');
                     });
+                    
+                    // Handle Elapsed Time Background Color
+                    if (data.solved) {
+                        $('#stat-elapsed-time').addClass('solved');
+                        // Remove the 'solved' class after 3 seconds
+                        setTimeout(function() {
+                            $('#stat-elapsed-time').removeClass('solved');
+                        }, 3000);
+                    }
                 },
                 error: function(error) {
                     console.error("Error fetching data:", error);
@@ -504,28 +515,25 @@ def evolve_population(population, adjustment_rate):
         return population
     return new_population
 
-def run_simulation(population_size, num_cities, adjustment_rate, iterations=1000):
+def run_simulation(population_size, num_cities, adjustment_rate):
     global simulation_data, simulation_running
     try:
         population = initialize_population(population_size, num_cities)
         best_fitness = float("inf")
         best_route = []
         start_time = time.time()
+        solved = False
 
-        for iteration in range(1, iterations + 1):
-            if simulation_stop_event.is_set():
-                logging.info("[Simulation] Stop signal received. Terminating simulation.")
-                break
-
+        while not simulation_stop_event.is_set():
             # Evolve population
             population = evolve_population(population, adjustment_rate)
 
             # Validate population
             with data_lock:
-                num_cities = simulation_data["stats"]["num_cities"]
-            if not validate_population(population, num_cities):
+                current_num_cities = simulation_data["stats"]["num_cities"]
+            if not validate_population(population, current_num_cities):
                 logging.error("[Simulation] Population is invalid. Resetting population.")
-                population = initialize_population(simulation_data["stats"]["population_size"], num_cities)
+                population = initialize_population(simulation_data["stats"]["population_size"], current_num_cities)
                 continue
 
             # Find best in current population
@@ -541,15 +549,23 @@ def run_simulation(population_size, num_cities, adjustment_rate, iterations=1000
                 with data_lock:
                     simulation_data["stats"]["best_fitness"] = best_fitness
                     simulation_data["best_route"] = [CITIES[city].tolist() for city in best_route]
-                    simulation_data["stats"]["steps"] = iteration
+                    simulation_data["stats"]["steps"] += 1
                     simulation_data["stats"]["elapsed_time"] = f"{mins:02}:{secs:02}"
-                    simulation_data["recent_events"].append(f"New best fitness: {best_fitness:.2f} at iteration {iteration}")
+                    simulation_data["recent_events"].append(f"New best fitness: {best_fitness:.2f} at iteration {simulation_data['stats']['steps']}")
+                    simulation_data["solved"] = True  # Indicate that a new best was found
+                solved = True
 
-            # Update elapsed time
-            elapsed_time = time.time() - start_time
-            mins, secs = divmod(int(elapsed_time), 60)
+            # Update elapsed time if not solved
+            if not solved:
+                elapsed_time = time.time() - start_time
+                mins, secs = divmod(int(elapsed_time), 60)
+                with data_lock:
+                    simulation_data["stats"]["elapsed_time"] = f"{mins:02}:{secs:02}"
+
+            # Reset solved flag after handling
             with data_lock:
-                simulation_data["stats"]["elapsed_time"] = f"{mins:02}:{secs:02}"
+                if simulation_data["solved"]:
+                    simulation_data["solved"] = False
 
             # Optional: Sleep to simulate runtime
             time.sleep(0.01)  # Reduced sleep time for faster simulation
@@ -593,6 +609,7 @@ if rank == 0:
                 "best_route": simulation_data["best_route"],
                 "cities": simulation_data["cities"],
                 "recent_events": simulation_data["recent_events"],
+                "solved": simulation_data.get("solved", False)
             }
         return jsonify(response)
 
@@ -606,6 +623,7 @@ if rank == 0:
         with data_lock:
             if not simulation_data["running"]:
                 simulation_data["running"] = True
+                simulation_data["solved"] = False
                 simulation_stop_event.clear()
                 need_to_start = True
                 simulation_thread = threading.Thread(
@@ -614,7 +632,6 @@ if rank == 0:
                         simulation_data["stats"]["population_size"],
                         simulation_data["stats"]["num_cities"],
                         simulation_data["stats"]["adjustment_rate"],
-                        simulation_data["stats"]["iterations"]
                     )
                 )
         if need_to_start:
@@ -681,6 +698,7 @@ if rank == 0:
             simulation_data["best_route"] = []
             simulation_data["stats"]["elapsed_time"] = "00:00"
             simulation_data["recent_events"] = ["Simulation reset."]
+            simulation_data["solved"] = False
             # Reinitialize city coordinates
             CITIES = np.random.rand(simulation_data["stats"]["num_cities"], 2) * 100
             simulation_data["cities"] = CITIES.tolist()
@@ -721,7 +739,7 @@ if rank == 0:
                 # Update simulation parameters
                 simulation_data["stats"]["num_cities"] = PREDEFINED_OPTIONS[difficulty]["cities"]
                 simulation_data["stats"]["population_size"] = PREDEFINED_OPTIONS[difficulty]["population_size"]
-                simulation_data["stats"]["iterations"] = PREDEFINED_OPTIONS[difficulty]["iterations"]
+                simulation_data["stats"]["iterations"] = PREDEFINED_OPTIONS[difficulty]["iterations"]  # Ignored in infinite iterations
                 simulation_data["stats"]["adjustment_rate"] = PREDEFINED_OPTIONS[difficulty]["adjustment_rate"]
                 
                 # Reinitialize city coordinates based on new number of cities
@@ -731,6 +749,7 @@ if rank == 0:
                 simulation_data["stats"]["best_fitness"] = float("inf")
                 simulation_data["stats"]["steps"] = 0
                 simulation_data["stats"]["elapsed_time"] = "00:00"
+                simulation_data["solved"] = False
                 simulation_data["recent_events"].append(f"Difficulty level set to {difficulty}. Simulation parameters updated.")
                 logging.info(f"[Rank 0] Difficulty level set to {difficulty}. Simulation parameters updated.")
             
@@ -773,7 +792,7 @@ else:
                 adjustment_rate = 0.1  # Default adjustment rate; can be updated as needed
                 population = evolve_population(population, adjustment_rate)
 
-                # Find best in local population
+                # Find best fitness and route in local population
                 local_best = min(population, key=fitness_function)
                 local_best_fitness = fitness_function(local_best)
 
