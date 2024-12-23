@@ -137,5 +137,5 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 ## 📧 Contact
 
-- **Creator**: [Your Name](mailto:your-email@example.com)
+- **Creator**: [Chat-GPT 4o](mailto:your-email@example.com)
 - **Project Link**: [GitHub Repository](https://github.com/your-username/tsp-simulator-dashboard)
