@@ -78,6 +78,7 @@ simulation_data = {
         "title": "Traveling Salesman Simulator",
         "description": "An MPI-based evolutionary algorithm simulator to find the shortest possible route visiting a set of cities.",
         "creator": "Chat-GPT 4o",
+        "Ranks": "32; 2 x Intel(R) Xeon(R) E-2276G CPU @ 3.80GHz & 1 x Intel(R) Core(TM) i7-9700T CPU @ 2.00GHz",
         "version": "1.0",
         "license": "MIT",
     }
@@ -114,6 +115,7 @@ html_template = """
                 <h5 class="card-title">{{ project_info.title }}</h5>
                 <p class="card-text">{{ project_info.description }}</p>
                 <p><strong>Creator:</strong> {{ project_info.creator }}</p>
+                <p><strong>Ranks:</strong> {{ project_info.Ranks }}</p>
                 <p><strong>Version:</strong> {{ project_info.version }}</p>
                 <p><strong>License:</strong> {{ project_info.license }}</p>
             </div>
