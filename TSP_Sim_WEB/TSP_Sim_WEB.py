@@ -76,7 +76,7 @@ simulation_data = {
     "project_info": {
         "title": "Traveling Salesman Simulator",
         "description": "An MPI-based evolutionary algorithm simulator to find the shortest possible route visiting a set of cities.",
-        "creator": "Chat-GPR 4o",
+        "creator": "Chat-GPT 4o",
         "version": "1.0",
         "license": "MIT",
     }
@@ -225,8 +225,8 @@ html_template = """
                 datasets: [{
                     label: 'Best Route',
                     data: [],
-                    backgroundColor: 'rgba(75, 192, 192, 1)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'orange', // Set point color to yellow
+                    borderColor: 'black', // Set line color
                     showLine: true,
                     fill: false,
                     pointRadius: 5,
