@@ -76,7 +76,7 @@ simulation_data = {
     "recent_events": [],
     "project_info": {
         "title": "Traveling Salesman Simulator",
-        "description": "An MPI-based evolutionary algorithm simulator to find the shortest possible route visiting a set of cities.",
+        "description": "A cutting-edge MPI-driven evolutionary algorithm simulator designed to solve the Traveling Salesman Problem by identifying the most efficient route through a set of cities.",
         "creator": "Chat-GPT 4o",
         "Ranks": "32; 2 x Intel(R) Xeon(R) E-2276G CPU @ 3.80GHz & 1 x Intel(R) Core(TM) i7-9700T CPU @ 2.00GHz",
         "version": "1.0",
@@ -229,8 +229,8 @@ html_template = """
                 datasets: [{
                     label: 'Best Route',
                     data: [],
-                    backgroundColor: 'orange', // Set point color to orange
-                    borderColor: 'black', // Set line color
+                    backgroundColor: 'orange', // Initial point color
+                    borderColor: 'black', // Initial line color
                     showLine: true,
                     fill: false,
                     pointRadius: 5,
@@ -278,6 +278,9 @@ html_template = """
             }
         });
         
+        // Variable to track the current color state
+        var currentRouteColor = 'orange';
+
         // Function to update data
         function updateData() {
             $.ajax({
@@ -290,6 +293,13 @@ html_template = """
                     $('#stat-elapsed-time').text(data.stats.elapsed_time);
                     $('#stat-num-cities').text(data.stats.num_cities);
                     
+                    // Determine the color based on whether a new best route was found
+                    if (data.solved) {
+                        currentRouteColor = 'green';
+                    } else {
+                        currentRouteColor = 'orange';
+                    }
+
                     // Update Route Chart
                     var routeData = data.best_route.map(function(city) {
                         return {x: city[0], y: city[1]};
@@ -299,6 +309,8 @@ html_template = """
                         routeData.push(routeData[0]);
                     }
                     routeChart.data.datasets[0].data = routeData;
+                    routeChart.data.datasets[0].backgroundColor = currentRouteColor;
+                    routeChart.data.datasets[0].borderColor = 'black'; // Line color remains black
                     routeChart.update();
                     
                     // Update Recent Events
