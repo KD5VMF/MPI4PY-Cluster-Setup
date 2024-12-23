@@ -1,141 +1,105 @@
 
-# 🌟 Traveling Salesman Simulator Dashboard 🌟
+# Traveling Salesman Problem (TSP) Simulation Dashboard
 
-![License](https://img.shields.io/badge/License-MIT-blue.svg)
-![Python](https://img.shields.io/badge/Python-3.12-blue)
-![MPI](https://img.shields.io/badge/MPI-OpenMPI-blue)
+This project is an MPI-based evolutionary algorithm simulation to solve the Traveling Salesman Problem (TSP). It includes a Flask-powered dashboard for live visualization and control, supporting scalable computation using `mpi4py`.
 
-## 🗺️ About the Project
+## Features
 
-**Traveling Salesman Simulator Dashboard** is an interactive, web-based simulator for solving the Traveling Salesman Problem (TSP) using an evolutionary algorithm. It leverages **MPI** for parallel computation and **Flask** for a responsive dashboard interface.
+- **Interactive Dashboard**: Control simulation parameters and visualize results in real time.
+- **MPI-Based Scalability**: Distribute the computational workload across multiple nodes using MPI.
+- **Dynamic TSP Parameters**: Adjust the number of cities, population size, and more to explore different complexities.
+- **Genetic Algorithm**: Uses a genetic algorithm for evolving solutions to the TSP.
+- **Detailed Metrics**: Track metrics like elapsed time, best fitness, iterations, and city coordinates.
+- **Dynamic Visualization**: Real-time updates to the best route visualization using Chart.js.
+- **Difficulty Levels**: Predefined difficulty levels (1-46) with parameters interpolated for intermediate levels.
 
-The simulation calculates the shortest possible route visiting a set of cities and returning to the start. The project is ideal for:
+## Requirements
 
-- Learning about evolutionary algorithms and optimization.
-- Experimenting with MPI-based parallel programming.
-- Visualizing TSP solutions interactively.
-
----
-
-## ✨ Features
-
-- 🖥️ **Web Dashboard**:
-  - Monitor simulation metrics like steps, best fitness, and elapsed time.
-  - Visualize the shortest route in real-time.
-  - View recent events and simulation progress.
-- ⚙️ **Difficulty Levels**:
-  - Choose from **46 predefined difficulty levels**.
-  - Difficulty levels range from simple (5 cities) to extreme (95 cities).
-- 🎛️ **Controls**:
-  - Start, stop, or reset the simulation directly from the web interface.
-  - Update simulation parameters dynamically by selecting a difficulty level.
-- 🔍 **Best Route Visualization**:
-  - Real-time scatter plot with connecting lines for the best route.
-- 🌐 **MPI Parallel Processing**:
-  - Efficiently distributes computations across multiple processes.
-
----
-
-## 🚀 Getting Started
-
-Follow these instructions to set up and run the Traveling Salesman Simulator Dashboard on your machine.
-
-### Prerequisites
-
-- Python 3.12 or later
-- MPI installed (e.g., OpenMPI)
-- Python packages:
-  - `mpi4py`
+- Python 3.7+
+- Required Python packages:
   - `numpy`
   - `flask`
+  - `mpi4py`
+  - `werkzeug`
+  - `chart.js`
+  - `jquery`
+  - `bootstrap`
 
-### Installation
+## Installation
 
-1. Clone the repository:
+1. Clone this repository:
    ```bash
-   git clone https://github.com/your-username/tsp-simulator-dashboard.git
-   cd tsp-simulator-dashboard
+   git clone <repository_url>
+   cd <repository_directory>
    ```
 
-2. Install dependencies:
+2. Install the required Python packages:
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Ensure MPI is installed:
-   ```bash
-   sudo apt-get install openmpi-bin openmpi-common libopenmpi-dev
-   ```
+3. Ensure MPI is installed and configured on your system.
 
----
-
-## ⚙️ Usage
+## Usage
 
 ### Running the Simulation
 
-Use the following command to run the program with MPI:
-
-```bash
-mpirun -n <number_of_processes> python tsp_simulation_dashboard.py
-```
-
-- Replace `<number_of_processes>` with the desired number of processes.
-
-### Accessing the Dashboard
-
-1. Open your browser and navigate to `http://127.0.0.1:5000`.
-2. Use the web interface to:
-   - Start, stop, or reset the simulation.
-   - Set the difficulty level.
-
----
-
-## 📊 Simulation Metrics
-
-The dashboard displays real-time metrics, including:
-- **Iterations Completed**: Total optimization steps.
-- **Best Fitness**: Shortest route distance found.
-- **Elapsed Time**: Time since the simulation started.
-- **Number of Cities**: Total cities in the current simulation.
-
----
-
-## 🛠️ Built With
-
-- **Python**: The core programming language.
-- **Flask**: Web framework for the dashboard.
-- **MPI**: Parallel computing framework for distributed processing.
-- **Chart.js**: Interactive chart library for visualizations.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Follow these steps to contribute:
-1. Fork the repository.
-2. Create your feature branch:
+1. **Start the Program**:
+   On the master node (rank 0), start the program using:
    ```bash
-   git checkout -b feature/AmazingFeature
+   mpirun -np <number_of_processes> python tsp_simulation_dashboard.py
    ```
-3. Commit your changes:
-   ```bash
-   git commit -m 'Add some AmazingFeature'
+
+2. **Access the Dashboard**:
+   Open a web browser and navigate to:
    ```
-4. Push to the branch:
-   ```bash
-   git push origin feature/AmazingFeature
+   http://<master_node_ip>:5000
    ```
-5. Open a pull request.
+
+3. **Control Simulation**:
+   Use the dashboard to:
+   - Start/stop/reset the simulation.
+   - Adjust difficulty levels dynamically.
+
+4. **Monitor Metrics**:
+   View live metrics, such as:
+   - Iterations completed
+   - Best fitness
+   - Elapsed time
+   - Number of cities
+
+5. **Visualize Results**:
+   - Track the best route dynamically on the visualization chart.
+
+### Notes
+
+- The simulation runs indefinitely unless manually stopped.
+- The elapsed time card changes its background color to green when a new best fitness is found and reverts after a few seconds.
+
+## Code Structure
+
+- `tsp_simulation_dashboard.py`: Main program file containing all functionalities.
+- Genetic Algorithm Components:
+  - `initialize_population`: Randomly initializes the population.
+  - `fitness_function`: Calculates the total distance of a route.
+  - `mutate`: Mutates a route by swapping two cities.
+  - `crossover`: Performs ordered crossover between two parents.
+  - `evolve_population`: Evolves the population using genetic operations.
+
+## Known Issues
+
+- Ensure all nodes are reachable and properly configured for MPI.
+- Invalid city coordinates or route indices can result in runtime errors.
+
+## Contributing
+
+Contributions are welcome! Please fork the repository, create a feature branch, and submit a pull request.
+
+## License
+
+This project is licensed under the MIT License.
 
 ---
 
-## 📝 License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
----
-
-## 📧 Contact
-
-- **Creator**: [Chat-GPT 4o](mailto:your-email@example.com)
-- **Project Link**: [GitHub Repository](https://github.com/your-username/tsp-simulator-dashboard)
+**Creator**: Chat-GPT 4o  
+**Version**: 1.0  
