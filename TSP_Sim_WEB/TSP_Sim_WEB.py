@@ -67,17 +67,17 @@ simulation_data = {
         "population_size": 100,
         "num_cities": 20,
         "adjustment_rate": 0.1,
-        "iterations": 1000,  # This will be ignored for infinite iterations
+        "iterations": 4000,  # This will be ignored for infinite iterations
     },
     "best_route": [],
     "cities": [],
     "recent_events": [],
     "project_info": {
         "title": "Traveling Salesman Simulator",
-        "description": "A cutting-edge MPI-driven evolutionary algorithm simulator designed to solve the Traveling Salesman Problem by identifying the most efficient route through a set of cities.",
+        "description": "MPI-driven evolutionary algorithm simulator designed to solve the Traveling Salesman Problem by identifying the most efficient route through a set of cities. Optimization Method: Genetic Algorithm.",
         "creator": "Chat-GPT 4o",
-        "Ranks": "32; 2 x Intel(R) Xeon(R) E-2276G CPU @ 3.80GHz & 1 x Intel(R) Core(TM) i7-9700T CPU @ 2.00GHz",
-        "version": "1.0",
+        "Ranks": "24; DeskPi Super6c. 6x CM4, 4GB-RAM, 256GB-nvme. Totals: 24 Threads, 24GB RAM, 1.5TB Storage.",
+        "version": "4.0",
         "license": "MIT",
     }
 }
