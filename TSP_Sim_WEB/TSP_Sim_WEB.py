@@ -1,5 +1,3 @@
-# tsp_simulation_dashboard.py
-
 import os
 import numpy as np
 import random
@@ -97,7 +95,7 @@ html_template = """
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .card { margin-bottom: 20px; }
-        canvas { width: 100% !important; max-height: 500px !important; }
+        canvas { width: 100% !important; max-height: 800px !important; }
         .btn-group { margin-bottom: 20px; }
         .solved { background-color: #28a745 !important; color: white !important; }
     </style>
@@ -105,7 +103,7 @@ html_template = """
 <body>
     <div class="container-fluid">
         <h1 class="mb-4">{{ project_info.title }} Dashboard</h1>
-        
+
         <!-- Project Information -->
         <div class="card">
             <div class="card-header">
@@ -120,7 +118,7 @@ html_template = """
                 <p><strong>License:</strong> {{ project_info.license }}</p>
             </div>
         </div>
-        
+
         <!-- Difficulty Selection -->
         <div class="card">
             <div class="card-header">
@@ -140,14 +138,14 @@ html_template = """
                 </form>
             </div>
         </div>
-        
+
         <!-- Control Buttons -->
         <div class="btn-group" role="group" aria-label="Control Buttons">
             <button type="button" class="btn btn-success" onclick="startSimulation()">Start Simulation</button>
             <button type="button" class="btn btn-danger" onclick="stopSimulation()">Stop Simulation</button>
             <button type="button" class="btn btn-warning" onclick="resetSimulation()">Reset Simulation</button>
         </div>
-        
+
         <!-- Simulation Metrics -->
         <div class="row">
             <div class="col-md-3">
@@ -183,7 +181,7 @@ html_template = """
                 </div>
             </div>
         </div>
-        
+
         <!-- Best Route Visualization -->
         <div class="row">
             <div class="col-md-12">
@@ -197,7 +195,7 @@ html_template = """
                 </div>
             </div>
         </div>
-        
+
         <!-- Recent Events -->
         <div class="row mt-4">
             <div class="col-md-12">
@@ -214,12 +212,12 @@ html_template = """
             </div>
         </div>
     </div>
-    
+
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    
+
     <script>
         // Initialize Route Chart as a Scatter Plot with Lines
         var ctx = document.getElementById('routeChart').getContext('2d');
@@ -239,6 +237,7 @@ html_template = """
             },
             options: {
                 responsive: true,
+                aspectRatio: 1,  // Force the chart to be square
                 title: {
                     display: true,
                     text: 'Best Route Visualization'
@@ -277,7 +276,7 @@ html_template = """
                 }
             }
         });
-        
+
         // Variable to track the current color state
         var currentRouteColor = 'orange';
 
@@ -292,7 +291,7 @@ html_template = """
                     $('#stat-best-fitness').text(data.stats.best_fitness === Infinity ? '∞' : data.stats.best_fitness.toFixed(2));
                     $('#stat-elapsed-time').text(data.stats.elapsed_time);
                     $('#stat-num-cities').text(data.stats.num_cities);
-                    
+
                     // Determine the color based on whether a new best route was found
                     if (data.solved) {
                         currentRouteColor = 'green';
@@ -312,14 +311,14 @@ html_template = """
                     routeChart.data.datasets[0].backgroundColor = currentRouteColor;
                     routeChart.data.datasets[0].borderColor = 'black'; // Line color remains black
                     routeChart.update();
-                    
+
                     // Update Recent Events
                     var eventsList = $('#recent-events');
                     eventsList.empty();
                     data.recent_events.slice(-10).reverse().forEach(function(event) {
                         eventsList.append('<li>' + event + '</li>');
                     });
-                    
+
                     // Handle Elapsed Time Background Color
                     if (data.solved) {
                         $('#stat-elapsed-time').addClass('solved');
@@ -334,7 +333,7 @@ html_template = """
                 }
             });
         }
-        
+
         // Start Simulation
         function startSimulation() {
             $.post('/start', function(response) {
@@ -349,7 +348,7 @@ html_template = """
                 alert("Error communicating with server.");
             });
         }
-        
+
         // Stop Simulation
         function stopSimulation() {
             $.post('/stop', function(response) {
@@ -364,7 +363,7 @@ html_template = """
                 alert("Error communicating with server.");
             });
         }
-        
+
         // Reset Simulation
         function resetSimulation() {
             $.post('/reset', function(response) {
@@ -378,7 +377,7 @@ html_template = """
                 alert("Error communicating with server.");
             });
         }
-        
+
         // Set Difficulty Level
         $('#difficulty-form').on('submit', function(e) {
             e.preventDefault();
@@ -396,10 +395,10 @@ html_template = """
                 alert("Error communicating with server.");
             });
         });
-        
+
         // Initial Data Load
         updateData();
-        
+
         // Periodically update data every 5 seconds
         setInterval(updateData, 5000);
     </script>
@@ -414,13 +413,13 @@ class ServerThread(threading.Thread):
         self.server = make_server('0.0.0.0', 5000, app)
         self.ctx = app.app_context()
         self.ctx.push()
-    
+
     def run(self):
         try:
             self.server.serve_forever()
         except Exception as e:
             logging.error(f"Flask server encountered an error: {e}")
-    
+
     def shutdown(self):
         self.server.shutdown()
 
@@ -731,7 +730,7 @@ if rank == 0:
             if difficulty not in PREDEFINED_OPTIONS:
                 logging.error(f"[Rank 0] Invalid difficulty level received: {difficulty}")
                 return jsonify({"status": "invalid_difficulty"})
-            
+
             need_to_stop = False
             with data_lock:
                 # If simulation is running, stop it before changing difficulty
@@ -748,14 +747,14 @@ if rank == 0:
                         simulation_data["recent_events"].append("Simulation stopped for difficulty change.")
                         logging.info("[Rank 0] Simulation stopped for difficulty change.")
                         simulation_thread = None
-            
+
             with data_lock:
                 # Update simulation parameters
                 simulation_data["stats"]["num_cities"] = PREDEFINED_OPTIONS[difficulty]["cities"]
                 simulation_data["stats"]["population_size"] = PREDEFINED_OPTIONS[difficulty]["population_size"]
                 simulation_data["stats"]["iterations"] = PREDEFINED_OPTIONS[difficulty]["iterations"]  # Ignored in infinite iterations
                 simulation_data["stats"]["adjustment_rate"] = PREDEFINED_OPTIONS[difficulty]["adjustment_rate"]
-                
+
                 # Reinitialize city coordinates based on new number of cities
                 CITIES = np.random.rand(simulation_data["stats"]["num_cities"], 2) * 100
                 simulation_data["cities"] = CITIES.tolist()
@@ -766,9 +765,10 @@ if rank == 0:
                 simulation_data["solved"] = False
                 simulation_data["recent_events"].append(f"Difficulty level set to {difficulty}. Simulation parameters updated.")
                 logging.info(f"[Rank 0] Difficulty level set to {difficulty}. Simulation parameters updated.")
-            
+
             return jsonify({"status": "difficulty_set"})
-        
+
+
         except Exception as e:
             logging.error(f"[Rank 0] Exception in set_difficulty: {e}")
             return jsonify({"status": "error", "message": str(e)})
@@ -816,7 +816,7 @@ else:
                     "best_route": local_best,
                     "recent_events": [f"Rank {rank}: New local best fitness: {local_best_fitness:.2f}"]
                 }, dest=0, tag=101)
-            
+
             except Exception as e:
                 logging.error(f"[Rank {rank}] Exception in worker_loop: {e}")
                 break
